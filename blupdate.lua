@@ -1,7 +1,7 @@
 #!/opt/bin/lua
 
 local config = {
-    blSource = "rublacklist", -- antizapret или rublacklist
+    blSource = "antizapret", -- antizapret или rublacklist
     groupBySld = 16, -- количество поддоменов после которого в список вносится весь домен второго уровня целиком
     neverGroupMasks = { "^%a%a%a?.%a%a$" }, -- не распространять на org.ru, net.ua и аналогичные
     neverGroupDomains = { ["livejournal.com"] = true, ["facebook.com"] = true , ["vk.com"] = true },
@@ -233,7 +233,12 @@ local retVal, retCode, url
 local output, bltables = cunstructTables()
 if config.blSource == "rublacklist" then
     output = ltn12.sink.chain(ltn12.filter.chain(rublacklistExtractDomains(), normalizeFqdn()), output)
-    url = "https://raw.githubusercontent.com/lazikkk/blupdate/main/routes"
+    url = "https://reestr.rublacklist.net/api/v3/domains/"
+elseif config.blSource == "antizapret" then
+    output = ltn12.sink.chain(ltn12.filter.chain(antizapretExtractDomains(), normalizeFqdn()), output)
+    url = "https://reestr.rublacklist.net/api/v3/ips/"
+else
+    error("blacklist source should be either 'rublacklist' or 'antizapret'")
 end
 
 if http then
