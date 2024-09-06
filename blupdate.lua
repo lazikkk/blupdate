@@ -234,7 +234,7 @@ local output, bltables = cunstructTables()
 if config.blSource == "rublacklist" then
     output = ltn12.sink.chain(ltn12.filter.chain(rublacklistExtractDomains(), normalizeFqdn()), output)
     url = "https://raw.githubusercontent.com/lazikkk/blupdate/main/routes"
-
+end
 
 if http then
     retVal, retCode = http.request { url = url, sink = output }
